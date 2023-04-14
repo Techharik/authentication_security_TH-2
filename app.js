@@ -1,3 +1,5 @@
+import * as dotenv from 'dotenv'
+dotenv.config()
 import express from "express";
 import bodyParser from "body-parser";
 import ejs from 'ejs';
@@ -20,8 +22,12 @@ const userSchema = new Schema({
     email:String,
     userPassword:String,
 })
-const encryptionKey='jksdnfcjkesnfjkndsfjkndsjk'
-userSchema.plugin(encrypt,{secret:encryptionKey,encryptedFields:['userPassword']});
+
+// const encryptionKey='jksdnfcjkesnfjkndsfjkndsjk';
+
+//ENV WORKINF LEVEL-2:
+// console.log(process.env.SECRET)
+// userSchema.plugin(encrypt,{secret:process.env.SECRET,encryptedFields:['userPassword']});
 
 
 const UserInfo =new model('userinfo',userSchema);
