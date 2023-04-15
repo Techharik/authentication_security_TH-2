@@ -1,10 +1,15 @@
-import * as dotenv from 'dotenv'
-dotenv.config()
+// import * as dotenv from 'dotenv'
+// dotenv.config()
 import express from "express";
 import bodyParser from "body-parser";
 import ejs from 'ejs';
 import { model,Schema,connect } from "mongoose";
-import encrypt from 'mongoose-encryption';
+// import md5 from 'md5';
+import bcrypt from 'bcrypt';
+
+const saltRounds = 10;
+// import encrypt from 'mongoose-encryption';
+
 // import userCheck from "./js/user";
 const app = express();
 
@@ -46,17 +51,24 @@ app.route('/register')
 
 
 .post((req,res)=>{
-  const newUser = new UserInfo({
-    email:req.body.username,
-    userPassword:req.body.password
-  })
 
- 
+ bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
 
-    newUser.save().then(()=>{
+    const newUser = new UserInfo({
+        email:req.body.username,
+        userPassword:hash
+      })
+      newUser.save().then(()=>{
         console.log('Successfully Saved')
         res.render('secrets')
       })
+        
+    });
+ 
+
+ 
+
+    
   
   
   
@@ -72,10 +84,14 @@ app.get('/login',(req,res)=>{
 app.post('/login',(req,res)=>{
     const username = req.body.username;
     const password = req.body.password;
+
     UserInfo.findOne({email : username}).then((data)=>{
-        if (data.userPassword === password){
+        bcrypt.compare(password, data.userPassword, function(err, result) {
+            if(result === true){
             res.render('secrets')
-        }
+            }
+        });
+        
     })
 
 })
