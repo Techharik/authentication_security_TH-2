@@ -86,11 +86,17 @@ app.post('/login',(req,res)=>{
     const password = req.body.password;
 
     UserInfo.findOne({email : username}).then((data)=>{
-        bcrypt.compare(password, data.userPassword, function(err, result) {
-            if(result === true){
-            res.render('secrets')
-            }
-        });
+     
+    
+            bcrypt.compare(password, data.userPassword, function(err, result) {
+                if(result === true){
+                res.render('secrets')
+                }else{
+                    console.log('Error')
+                }
+            });
+        
+       
         
     })
 
